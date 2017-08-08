@@ -1,0 +1,93 @@
+.border_full_1px(@color:#eee,@radius:1rem,@add:before) {
+  position: relative;
+  &:@{add} {
+    content: "";
+    pointer-events: none; /*防止点击触发*/
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: 1px solid @color;
+    border-radius: @radius * 2;
+  }
+  @media only screen and (min-device-pixel-ratio: 1.5),(-webkit-min-device-pixel-ratio: 1.5) {
+    &:before, &:after {
+      width: 200%;
+      height: 200%;
+      transform: scale(0.7);
+      transform-origin: 0 0;
+    }
+  }
+  @media only screen and (min-device-pixel-ratio: 2),(-webkit-min-device-pixel-ratio: 2) {
+    &:before, &:after {
+      width: 200%;
+      height: 200%;
+      transform: scale(0.5);
+      transform-origin: 0 0;
+    }
+  }
+  @media only screen and (min-device-pixel-ratio: 3),(-webkit-min-device-pixel-ratio: 3) {
+    &:before, &:after {
+      width: 200%;
+      height: 200%;
+      transform: scale(0.333);
+      transform-origin: 0 0;
+    }
+  }
+}
+
+.border_1px(@color:#ddd,@pos:bottom,@add:after){
+  position: relative;
+  &:@{add} {
+    height: 1px;
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    @{pos}: 0;
+    width: 100%;
+    background-color: @color;
+  }
+  @media only screen and (min-device-pixel-ratio: 1.5),(-webkit-min-device-pixel-ratio: 1.5) {
+    &:before, &:after {
+      transform: scaleY(0.7);
+    }
+  }
+  @media only screen and (min-device-pixel-ratio: 2),(-webkit-min-device-pixel-ratio: 2) {
+    &:before, &:after {
+      transform: scaleY(0.5);
+    }
+  }
+  @media only screen and (min-device-pixel-ratio: 3),(-webkit-min-device-pixel-ratio: 3) {
+    &:before, &:after {
+      transform: scaleY(0.333);
+    }
+  }
+}
+
+/*自动隐藏文字*/
+.ellipsis {
+  display: -webkit-box;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: normal !important;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+//清除浮动
+.clearfix {
+  display: inline-block;
+  &:after {
+    display: block;
+    content: ".";
+    height: 0;
+    line-height: 0;
+    clear: both;
+    visibility: hidden;
+  }
+}
