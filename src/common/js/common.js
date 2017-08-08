@@ -16,3 +16,10 @@ export function computedREM() {
   const windowWidth = html.clientWidth;
   html.style.fontSize = parseInt(windowWidth / 750 * 20) + 'px';
 }
+
+export function conversion(number) {
+  if(parseInt(number) > 10000) {
+    return `${(number / 10000).toFixed(1)}万`
+  }
+  return number;
+}

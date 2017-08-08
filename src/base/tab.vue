@@ -46,6 +46,7 @@
           bottom: 0;
           width: 40%;
           height: 0.2rem;
+          z-index: 2;
           background: @color-theme;
         }
       }

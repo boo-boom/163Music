@@ -10,14 +10,15 @@
     height: 100%;
     box-sizing: border-box;
     border: 1px solid @color;
-    border-radius: @radius * 2;
+    border-radius: @radius;
+    transform-origin: 0 0;
   }
   @media only screen and (min-device-pixel-ratio: 1.5),(-webkit-min-device-pixel-ratio: 1.5) {
     &:before, &:after {
-      width: 200%;
-      height: 200%;
-      transform: scale(0.7);
-      transform-origin: 0 0;
+      width: 150%;
+      height: 150%;
+      transform: scale(0.75);
+      border-radius: @radius * 1.5;
     }
   }
   @media only screen and (min-device-pixel-ratio: 2),(-webkit-min-device-pixel-ratio: 2) {
@@ -25,15 +26,15 @@
       width: 200%;
       height: 200%;
       transform: scale(0.5);
-      transform-origin: 0 0;
+      border-radius: @radius * 2;
     }
   }
   @media only screen and (min-device-pixel-ratio: 3),(-webkit-min-device-pixel-ratio: 3) {
     &:before, &:after {
-      width: 200%;
-      height: 200%;
+      width: 300%;
+      height: 300%;
       transform: scale(0.333);
-      transform-origin: 0 0;
+      border-radius: @radius * 3;
     }
   }
 }
@@ -77,6 +78,17 @@
   word-break: break-all;
   white-space: normal !important;
   -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+.ellipsis-2 {
+  display: -webkit-box;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: normal !important;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 //清除浮动
