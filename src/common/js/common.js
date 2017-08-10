@@ -41,3 +41,16 @@ export function filterSinger(obj) {
   });
   return ret.join(' / ');
 }
+
+/**
+ * 获取列表所有歌曲id
+ * @param list
+ * @returns {string}
+ */
+export function getSongsId(list) {
+  let ret = [];
+  list.forEach((item) => {
+    ret.push(item.id);
+  });
+  return ret.join(',');
+}

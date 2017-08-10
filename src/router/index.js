@@ -18,7 +18,7 @@ export default new Router({
       component: Recommend,
       children: [
         {
-          path: '/recommend/list',
+          path: ':id',
           component: PlayList
         }
       ]

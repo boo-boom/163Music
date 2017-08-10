@@ -6,22 +6,26 @@
     </div>
     <div>
       <list-title title="最新音乐"></list-title>
-      <songs-list :songsList="songsList"></songs-list>
+      <songs-list :songsList="songsList" @clickCurrent="checkedSong"></songs-list>
     </div>
+    <loading v-show="!songsList.length"></loading>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+  import {mapMutations} from 'vuex'
   import ImgList from 'base/img_list'
   import ListTitle from 'base/list_title'
   import SongsList from 'base/songs_list'
+  import Loading from 'base/loading'
   import axios from 'axios'
   import {createdSong} from 'common/js/base'
+  import {getSongsId} from 'common/js/common'
 
   export default {
     name: 'recommend',
-    components: {ListTitle, ImgList, SongsList},
+    components: {ListTitle, ImgList, SongsList, Loading},
     created() {
       this._getSongSheet();
       this._getSongsList();
@@ -29,7 +33,8 @@
     data() {
       return {
         songSheet: [],
-        songsList: []
+        songsList: [],
+        songsId: ''
       }
     },
     methods: {
@@ -40,11 +45,11 @@
           });
         }
         this.$router.push({
-          path: `/recommend/list`,
-          query: {
-            id: item.id
-          }
+          path: `/recommend/${item.id}`
         });
+      },
+      checkedSong(item, index) {
+        this.setCurrentIndex(index);
       },
       _getSongSheet() {
         axios.get('/api/personalized').then((res) => {
@@ -57,16 +62,30 @@
         axios.get('/api/personalized/newsong').then((res) => {
           if (res.status === 200) {
             this.songsList = createdSong(res.data.result);
-            //console.log(JSON.stringify(this.songsList))
+            this.songsId = getSongsId(this.songsList);
+            this._getSongUrl();
           }
         })
-      }
+      },
+      _getSongUrl() {
+        axios.get('/api/music/url',{
+          params: {
+            id: this.songsId
+          }
+        }).then((res) => {
+          if (res.status === 200) {
+            this.setPlayList(res.data.data);
+          }
+        })
+      },
+      ...mapMutations({
+        setPlayList: 'SET_PLAY_LIST',
+        setCurrentIndex: 'SET_CURRENT_INDEX'
+      })
     }
   }
 </script>
 
-<style scoped>
-  body {
-    background-color: #ff0000;
-  }
+<style lang="less" rel="stylesheet/less" scoped>
+
 </style>

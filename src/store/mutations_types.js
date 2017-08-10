@@ -1,0 +1,2 @@
+export const SET_PLAY_LIST = 'SET_PLAY_LIST';
+export const SET_CURRENT_INDEX = 'SET_CURRENT_INDEX';

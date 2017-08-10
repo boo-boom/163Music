@@ -1,7 +1,7 @@
 <template>
   <div class="songs-list">
     <ul class="list-wrapper">
-      <li class="item" v-for="(item,index) in songsList">
+      <li class="item" v-for="(item,index) in songsList" @click="checkedSong(item, index)">
         <div class="left" :class="rankCls(index)" v-show="isRank">{{index + 1}}</div>
         <div class="middle">
           <p class="name ellipsis">{{item.name}}<span v-show="item.alias">{{item.alias}}</span></p>
@@ -34,6 +34,9 @@
     methods: {
       rankCls(index) {
         return index <= 2 ? 'active' : '';
+      },
+      checkedSong(item, index){
+        this.$emit('clickCurrent', item, index);
       }
     }
   }

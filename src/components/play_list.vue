@@ -1,19 +1,19 @@
 <template>
   <transition name="slide">
-    <div class="play-list" v-if="playObj" @touchmove.stop>
+    <div class="play-list" @touchmove.stop>
       <div class="header">
         <div class="icon" @click="back"><span class="iconfont icon-back"></span></div>
       </div>
       <div class="top">
-        <div class="bg" :style="bgStyle"></div>
+        <div class="bg" v-if="playObj.creator" :style="bgStyle"></div>
         <div class="left">
           <img v-lazy="playObj.picUrl" alt="">
         </div>
         <div class="right">
           <p class="name">{{playObj.name}}</p>
-          <div class="disc">
+          <div class="disc" v-if="playObj.creator">
             <img v-lazy="playObj.creator.avatarUrl" alt="">
-            <p class="text">倒叙年华</p>
+            <p class="text">{{playObj.creator.nickname}}</p>
           </div>
         </div>
       </div>
@@ -21,18 +21,17 @@
         <div class="tag">
           <p class="label">标签</p>
           <ul>
-            <li>华语</li>
-            <li>华语</li>
-            <li>华语</li>
+            <li v-for="item in playObj.tags">{{item}}</li>
           </ul>
         </div>
         <div class="list">
           <p class="label">歌曲列表</p>
         </div>
       </div>
-      <div content="songs-list">
-        <songs-list :songsList="songsList"></songs-list>
+      <div class="songs-list">
+        <songs-list :songsList="songsList" :isRank="isRank"></songs-list>
       </div>
+      <loading v-show="!songsList.length"></loading>
     </div>
   </transition>
 </template>
@@ -40,33 +39,35 @@
 <script>
   import axios from 'axios'
   import SongsList from 'base/songs_list'
+  import Loading from 'base/loading'
   import {filterSinger} from 'common/js/common'
 
   export default {
     name: 'playList',
-    components: {SongsList},
+    components: {SongsList, Loading},
     created() {
-      this.id = this.$route.query.id;
+      this.id = this.$route.params.id;
       this._getSongDetail();
     },
     data() {
       return {
         id: 0,
-        playObj: null,
-        songsList: []
+        playObj: {},
+        songsList: [],
+        isRank: true
       }
     },
     methods: {
       back() {
         this.$router.back();
       },
-      _getSongDetail(){
-        axios.get('/api/playlist/detail',{
+      _getSongDetail() {
+        axios.get('/api/playlist/detail', {
           params: {
             id: this.id
           }
         }).then((res) => {
-          if(res.status === 200){
+          if (res.status === 200) {
             this.playObj = res.data.playlist;
             this.songsList = this._normalSong(res.data.playlist.tracks);
           }
@@ -79,8 +80,8 @@
           music.id = item.id;
           music.name = item.name;
           music.alias = item.alia.length ? item.alia[0] : '';
-          music.artistsName = item.name;
-          music.albumName = filterSinger(item.ar);
+          music.artistsName = filterSinger(item.ar);
+          music.albumName = item.al.name;
           music.sq = false;
           ret.push(music);
         });
@@ -98,7 +99,6 @@
 <style lang="less" rel="stylesheet/less" scoped>
   @import "~common/style/variable";
   @import "~common/style/mixin";
-
   .slide-enter-active, .slide-leave-active {
     transition: all 0.3s;
   }
@@ -115,7 +115,7 @@
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     background: #fff;
-    .header{
+    .header {
       position: fixed;
       top: 0;
       left: 0;
@@ -125,7 +125,7 @@
       display: flex;
       align-items: center;
       padding: 0 1rem;
-      .iconfont{
+      .iconfont {
         font-weight: bold;
         color: @color-theme;
       }
@@ -148,7 +148,7 @@
         background-size: cover;
         filter: blur(20px);
         transform: scale(1.5);
-        &:after{
+        &:after {
           content: '';
           position: absolute;
           top: 0;
@@ -156,7 +156,7 @@
           z-index: 1;
           width: 100%;
           height: 100%;
-          background-color: rgba(0,0,0,.25);
+          background-color: rgba(0, 0, 0, .25);
         }
       }
       .left {
@@ -174,7 +174,7 @@
       }
       .right {
         margin: 4rem 1.5rem 0 0;
-        .name{
+        .name {
           line-height: 2rem;
           color: @color-background;
           font-size: @font-size-medium-x;
@@ -189,7 +189,7 @@
             height: 3rem;
             border-radius: 50%;
           }
-          .text{
+          .text {
             padding-left: 0.5rem;
             font-size: @font-size-small;
             color: @color-background;
@@ -197,21 +197,21 @@
         }
       }
     }
-    .info{
-      .tag{
+    .info {
+      .tag {
         display: flex;
         padding: 1.5rem;
         font-size: 0;
-        .label{
+        .label {
           margin-top: 1.5rem;
           margin-right: 1rem;
           white-space: nowrap;
           font-size: @font-size-small;
         }
-        & > ul{
+        & > ul {
           display: flex;
           flex-wrap: wrap;
-          & > li{
+          & > li {
             margin: 1rem 0.5rem 1rem;
             padding: 0.4rem 1rem;
             box-sizing: border-box;
@@ -222,8 +222,8 @@
           }
         }
       }
-      .list{
-        .label{
+      .list {
+        .label {
           line-height: 2rem;
           padding: 0 1.5rem;
           font-size: @font-size-small-ss;
