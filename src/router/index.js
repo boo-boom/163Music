@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Recommend from '@/components/recommend'
 import Hot from '@/components/hot'
 import Search from '@/components/search'
+import PlayList from '@/components/play_list'
 
 Vue.use(Router);
 
@@ -14,7 +15,13 @@ export default new Router({
     },
     {
       path: '/recommend',
-      component: Recommend
+      component: Recommend,
+      children: [
+        {
+          path: '/recommend/list',
+          component: PlayList
+        }
+      ]
     },
     {
       path: '/hot',

@@ -1,10 +1,11 @@
 <template>
   <div class="img-list clearfix">
     <ul class="list-wrapper">
-      <li class="item" v-for="item in songSheet">
+      <li class="item" v-for="item in songSheet" @click="selectItem(item)">
         <div class="img">
           <img v-lazy="item.picUrl">
           <span class="iconfont icon-crown" v-show="item.highQuality"></span>
+          <span class="shadow"></span>
         </div>
         <p class="disc ellipsis-2">{{item.name}}</p>
         <div class="pos">
@@ -30,6 +31,9 @@
     methods: {
       retNumber(number) {
         return conversion(number);
+      },
+      selectItem(item){
+        this.$emit('select', item);
       }
     }
   }
@@ -71,6 +75,14 @@
             z-index: 2;
             font-size: @font-size-small;
             color: #e1b538;
+          }
+          .shadow{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20%;
+            background: linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0));
           }
         }
         &:nth-child(3n - 2) {
