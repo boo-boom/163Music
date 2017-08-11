@@ -1,12 +1,17 @@
 <template>
-  <div class="loading">
+  <div class="loading" v-if="isLoad">
     <div>加载中</div>
   </div>
 </template>
 
 <script>
+  import {mapGetters} from 'vuex'
+
   export default {
-    name: 'loading'
+    name: 'loading',
+    computed: {
+      ...mapGetters(['isLoad'])
+    }
   }
 </script>
 
@@ -17,7 +22,7 @@
     left: 50%;
     padding: 1rem 2rem;
     font-size: 1.2rem;
-    z-index: 3;
+    z-index: 99;
     border-radius: 0.5rem;
     color: #ffffff;
     background: rgba(7,17,27,0.8);

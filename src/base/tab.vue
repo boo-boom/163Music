@@ -25,6 +25,7 @@
   .tab{
     display: flex;
     height: 4rem;
+    background: #fff;
     .border_1px();
     .tab-item{
       flex: 1;

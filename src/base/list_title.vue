@@ -1,6 +1,8 @@
 <template>
-  <div class="list-title">
-    <p class="title ellipsis">{{title}}</p>
+  <div class="title-wrapper">
+    <div class="list-title">
+      <p class="title ellipsis">{{title}}</p>
+    </div>
   </div>
 </template>
 
@@ -19,9 +21,11 @@
 <style lang="less" rel="stylesheet/less" scoped>
   @import "~common/style/variable";
   @import "~common/style/mixin";
-
+  .title-wrapper{
+    padding: 1.8rem 0;
+  }
   .list-title{
-    margin: 1.8rem 0;
+
     position: relative;
     &:before{
       content: '';

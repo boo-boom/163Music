@@ -1,6 +1,6 @@
 <template>
   <transition name="slide">
-    <div class="play-list" @touchmove.stop>
+    <div class="play-list">
       <div class="header">
         <div class="icon" @click="back"><span class="iconfont icon-back"></span></div>
       </div>
@@ -17,7 +17,7 @@
           </div>
         </div>
       </div>
-      <div class="info">
+      <div class="info" v-if="playObj.tags">
         <div class="tag">
           <p class="label">标签</p>
           <ul>
@@ -28,24 +28,26 @@
           <p class="label">歌曲列表</p>
         </div>
       </div>
-      <div class="songs-list">
-        <songs-list :songsList="songsList" :isRank="isRank"></songs-list>
-      </div>
-      <loading v-show="!songsList.length"></loading>
+      <scroll class="songs-list-wrapper" :isRefresh="isRefresh">
+        <songs-list :songsList="songsList" :isRank="isRank" @clickCurrent="checkedSong"></songs-list>
+      </scroll>
     </div>
   </transition>
 </template>
 
 <script>
+  import {mapMutations} from 'vuex'
   import axios from 'axios'
   import SongsList from 'base/songs_list'
-  import Loading from 'base/loading'
+  import Scroll from 'base/scroll'
   import {filterSinger} from 'common/js/common'
 
   export default {
     name: 'playList',
-    components: {SongsList, Loading},
+    components: {SongsList, Scroll},
     created() {
+      document.querySelector('body').style.overflow = 'hidden';
+      this.setIsLoad(true);
       this.id = this.$route.params.id;
       this._getSongDetail();
     },
@@ -54,12 +56,16 @@
         id: 0,
         playObj: {},
         songsList: [],
-        isRank: true
+        isRank: true,
       }
     },
     methods: {
       back() {
+        document.querySelector('body').style.overflow = '';
         this.$router.back();
+      },
+      checkedSong(item) {
+        console.log(JSON.stringify(item));
       },
       _getSongDetail() {
         axios.get('/api/playlist/detail', {
@@ -70,6 +76,7 @@
           if (res.status === 200) {
             this.playObj = res.data.playlist;
             this.songsList = this._normalSong(res.data.playlist.tracks);
+            this.setIsLoad(false);
           }
         })
       },
@@ -86,11 +93,17 @@
           ret.push(music);
         });
         return ret;
-      }
+      },
+      ...mapMutations({
+        setIsLoad: 'SET_IS_LOAD'
+      })
     },
     computed: {
       bgStyle() {
         return `background-image: url(${this.playObj.creator.backgroundUrl});`
+      },
+      isRefresh() {
+        return this.songsList.length ? true : false;
       }
     }
   }
@@ -109,11 +122,9 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 10;
+    z-index: 4;
     width: 100%;
     height: 100%;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
     background: #fff;
     .header {
       position: fixed;
@@ -231,6 +242,14 @@
           background: @color-text-lll;
         }
       }
+    }
+    .songs-list-wrapper{
+      overflow: hidden;
+      position: fixed;
+      top: 28.2rem;
+      left: 0;
+      bottom: 0;
+      width: 100%;
     }
   }
 </style>

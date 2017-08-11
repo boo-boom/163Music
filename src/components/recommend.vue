@@ -1,31 +1,34 @@
 <template>
-  <div class="recommend" v-show="songSheet.length">
-    <div>
-      <list-title title="推荐歌单"></list-title>
-      <img-list :songSheet="songSheet" @select="selectItem"></img-list>
-    </div>
-    <div>
-      <list-title title="最新音乐"></list-title>
-      <songs-list :songsList="songsList" @clickCurrent="checkedSong"></songs-list>
-    </div>
-    <loading v-show="!songsList.length"></loading>
+  <div>
+    <scroll class="recommend" v-show="songSheet.length" :isRefresh="isRefresh">
+      <div>
+        <div>
+          <list-title title="推荐歌单"></list-title>
+          <img-list :songSheet="songSheet" @select="selectItem"></img-list>
+        </div>
+        <div>
+          <list-title title="最新音乐"></list-title>
+          <songs-list :songsList="songsList" @clickCurrent="checkedSong"></songs-list>
+        </div>
+      </div>
+    </scroll>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-  import {mapMutations} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
   import ImgList from 'base/img_list'
   import ListTitle from 'base/list_title'
   import SongsList from 'base/songs_list'
-  import Loading from 'base/loading'
+  import Scroll from 'base/scroll'
   import axios from 'axios'
   import {createdSong} from 'common/js/base'
   import {getSongsId} from 'common/js/common'
 
   export default {
     name: 'recommend',
-    components: {ListTitle, ImgList, SongsList, Loading},
+    components: {ListTitle, ImgList, SongsList, Scroll},
     created() {
       this._getSongSheet();
       this._getSongsList();
@@ -34,7 +37,8 @@
       return {
         songSheet: [],
         songsList: [],
-        songsId: ''
+        songsId: '',
+        isClick: true
       }
     },
     methods: {
@@ -49,7 +53,20 @@
         });
       },
       checkedSong(item, index) {
-        this.setCurrentIndex(index);
+        this.setIsLoad(true);
+        if(!this.isClick){
+          return
+        }
+        this.isClick = false;
+        this._getSongUrl().then((res) => {
+          this.setIsLoad(false);
+          this.selectPlay({
+            list: res,
+            index: index,
+            info: item
+          });
+          this.isClick = true;
+        });
       },
       _getSongSheet() {
         axios.get('/api/personalized').then((res) => {
@@ -63,29 +80,44 @@
           if (res.status === 200) {
             this.songsList = createdSong(res.data.result);
             this.songsId = getSongsId(this.songsList);
-            this._getSongUrl();
           }
         })
       },
       _getSongUrl() {
-        axios.get('/api/music/url',{
+        return axios.get('/api/music/url',{
           params: {
             id: this.songsId
           }
         }).then((res) => {
           if (res.status === 200) {
-            this.setPlayList(res.data.data);
+            return new Promise((resolve, reject) => {
+              resolve(res.data.data);
+            });
           }
         })
       },
       ...mapMutations({
-        setPlayList: 'SET_PLAY_LIST',
-        setCurrentIndex: 'SET_CURRENT_INDEX'
-      })
+        setIsLoad: 'SET_IS_LOAD'
+      }),
+      ...mapActions(['selectPlay'])
+    },
+    computed: {
+      isRefresh() {
+        return this.songSheet.length && this.songsList.length ? true : false;
+      },
+      ...mapGetters(['playList'])
     }
   }
 </script>
 
 <style lang="less" rel="stylesheet/less" scoped>
-
+  .recommend{
+    box-sizing: border-box;
+    position: fixed;
+    top: 10.4rem;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+  }
 </style>
