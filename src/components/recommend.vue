@@ -53,7 +53,22 @@
         });
       },
       checkedSong(item, index) {
+        console.log(item);
         this.setIsLoad(true);
+        if(!this.isClick){
+          return
+        }
+        this._getSongUrl(item.id).then((res) => {
+          this.setIsLoad(false);
+          this.selectPlay({
+            list: this.songsList,
+            index: index,
+            info: item
+          });
+          console.log(res);
+          this.isClick = true;
+        })
+        /*this.setIsLoad(true);
         if(!this.isClick){
           return
         }
@@ -66,7 +81,7 @@
             info: item
           });
           this.isClick = true;
-        });
+        });*/
       },
       _getSongSheet() {
         axios.get('/api/personalized').then((res) => {
@@ -79,14 +94,14 @@
         axios.get('/api/personalized/newsong').then((res) => {
           if (res.status === 200) {
             this.songsList = createdSong(res.data.result);
-            this.songsId = getSongsId(this.songsList);
+            //this.songsId = getSongsId(this.songsList);
           }
         })
       },
-      _getSongUrl() {
+      _getSongUrl(id) {
         return axios.get('/api/music/url',{
           params: {
-            id: this.songsId
+            id: id
           }
         }).then((res) => {
           if (res.status === 200) {
