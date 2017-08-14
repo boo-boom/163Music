@@ -105,7 +105,7 @@
       isRefresh() {
         return this.songSheet.length && this.songsList.length ? true : false;
       },
-      ...mapGetters(['playList'])
+      ...mapGetters(['playList','currentSong'])
     }
   }
 </script>
