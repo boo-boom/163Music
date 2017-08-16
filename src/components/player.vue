@@ -2,14 +2,14 @@
   <div class="player" v-show="playList.length>0">
     <transition name="full">
       <div class="full" v-show="fullScreen">
-        <div class="bg" :style="getPic(songInfo.pic)"></div>
+        <div class="bg" :style="getPic(currentSong.pic)"></div>
         <div class="header">
           <div class="back iconfont icon-arrow-down" @click="back"></div>
-          <p class="title">{{songInfo.name}}</p>
+          <p class="title">{{currentSong.name}}</p>
         </div>
         <div class="cd">
           <div class="cd-wrapper" :class="rotateCls">
-            <img v-lazy="songInfo.pic" alt="">
+            <img v-lazy="currentSong.pic" alt="">
           </div>
         </div>
         <div class="progress-wrapper">
@@ -31,7 +31,7 @@
     <transition name="slide">
       <div class="mini" v-show="!fullScreen" @click="open">
         <div class="img">
-          <img v-lazy="songInfo.pic" :class="rotateCls">
+          <img v-lazy="currentSong.pic" :class="rotateCls">
         </div>
         <div class="mini-btn">
           <span class="iconfont mini-play-icon" :class="iconPlay" @click.stop="togglePlay"></span>
@@ -39,11 +39,12 @@
         </div>
       </div>
     </transition>
-    <audio id="audioPlay" :src="currentSong.url" @timeupdate="updateTime" ref="audio"></audio>
+    <audio id="audioPlay" :src="songUrl" @timeupdate="updateTime" ref="audio"></audio>
   </div>
 </template>
 
 <script>
+  import axios from 'axios'
   import {mapGetters, mapMutations} from 'vuex'
   import ProgressBar from 'base/progress_bar'
 
@@ -53,7 +54,9 @@
     data() {
       return {
         currentTime: 0,
-        playTime: 0
+        playTime: 0,
+        songUrl: '',
+        isFirst: true,
       }
     },
     methods: {
@@ -85,7 +88,6 @@
       next() {
         let index = this.currentIndex + 1;
         this.setCurrentIndex(index);
-        console.log(this.playList.length);
       },
       _pad(str) {
         let len = str.toString().length;
@@ -93,6 +95,21 @@
           return '0' + str;
         }
         return str;
+      },
+      _getSongUrl() {
+        axios.get('/api/music/url', {
+          params: {
+            id: this.currentSong.id
+          }
+        }).then((res) => {
+          if (res.status === 200) {
+            const audio = this.$refs.audio;
+            this.songUrl = res.data.data[0].url;
+            this.$nextTick(() => {
+              this.playing ? audio.play() : audio.pause();
+            });
+          }
+        })
       },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
@@ -102,7 +119,7 @@
     },
     computed: {
       iconPlay() {
-        return this.playing ? 'icon-zanting' : 'icon-bofang';
+        return this.playing ? 'icon-bofang' : 'icon-zanting';
       },
       rotateCls() {
         return this.playing ? 'play' : 'play pause';
@@ -110,19 +127,25 @@
       percent() {
         return this.currentTime / this.playTime;
       },
-      ...mapGetters(['playing', 'fullScreen', 'playList', 'currentSong', 'songInfo', 'currentIndex'])
+      ...mapGetters(['playing', 'fullScreen', 'playList', 'currentSong', 'currentIndex'])
     },
     watch: {
-      currentSong() {
-        this.$nextTick(() => {
-          this.$refs.audio.play();
-        });
+      currentIndex() {
+        this._getSongUrl();
       },
       playing(newVal) {
+        if (this.isFirst) {
+          this.isFirst = false;
+          return
+        }
         const audio = this.$refs.audio;
-        this.$nextTick(() => {
-          newVal ? audio.play() : audio.pause();
-        });
+        if (newVal) {
+          this.$nextTick(() => {
+            audio.play();
+          });
+        } else {
+          audio.pause();
+        }
       }
     }
   }
@@ -197,7 +220,6 @@
           color: @color-theme;
         }
       }
-      width: 100%;
       .cd {
         position: relative;
         padding-top: 80%;

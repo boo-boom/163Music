@@ -15,9 +15,6 @@ const mutations = {
   },
   [types.SET_CURRENT_INDEX](state, index){
     state.currentIndex = index;
-  },
-  [types.SET_SONG_INFO](state, info){
-    state.songInfo = info;
   }
 };
 

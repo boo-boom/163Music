@@ -7,7 +7,6 @@ const getters = {
   currentSong: (state) => {
     return state.playList[state.currentIndex] || {};
   },
-  songInfo: state => state.songInfo,
 };
 
 export default getters;

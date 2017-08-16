@@ -77,14 +77,14 @@
         position: absolute;
         top: 0;
         left: 0;
-        width: 50%;
+        width: 0;
         height: 0.5rem;
         background: @color-theme;
       }
       .prbtn {
         position: absolute;
         top: -0.5rem;
-        left: 50%;
+        left: 0;
         width: 1.5rem;
         height: 1.5rem;
         background: @color-theme;

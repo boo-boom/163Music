@@ -3,8 +3,7 @@ const state = {
   fullScreen: false,
   isLoad: false,
   playList: [],
-  currentIndex: 0,
-  songInfo: {}
+  currentIndex: -1,
 };
 
 export default state;

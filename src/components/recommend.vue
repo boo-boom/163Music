@@ -58,30 +58,12 @@
         if(!this.isClick){
           return
         }
-        this._getSongUrl(item.id).then((res) => {
-          this.setIsLoad(false);
-          this.selectPlay({
-            list: this.songsList,
-            index: index,
-            info: item
-          });
-          console.log(res);
-          this.isClick = true;
-        })
-        /*this.setIsLoad(true);
-        if(!this.isClick){
-          return
-        }
-        this.isClick = false;
-        this._getSongUrl().then((res) => {
-          this.setIsLoad(false);
-          this.selectPlay({
-            list: res,
-            index: index,
-            info: item
-          });
-          this.isClick = true;
-        });*/
+        this.setIsLoad(false);
+        this.selectPlay({
+          list: this.songsList,
+          index: index
+        });
+        this.isClick = true;
       },
       _getSongSheet() {
         axios.get('/api/personalized').then((res) => {
@@ -95,19 +77,6 @@
           if (res.status === 200) {
             this.songsList = createdSong(res.data.result);
             //this.songsId = getSongsId(this.songsList);
-          }
-        })
-      },
-      _getSongUrl(id) {
-        return axios.get('/api/music/url',{
-          params: {
-            id: id
-          }
-        }).then((res) => {
-          if (res.status === 200) {
-            return new Promise((resolve, reject) => {
-              resolve(res.data.data);
-            });
           }
         })
       },
