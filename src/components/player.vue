@@ -2,7 +2,9 @@
   <div class="player" v-show="playList.length>0">
     <transition name="full">
       <div class="full" v-show="fullScreen">
-        <div class="bg" :style="getPic(currentSong.pic)"></div>
+        <div class="bg">
+          <img :src="currentSong.pic" alt="">
+        </div>
         <div class="header">
           <div class="back iconfont icon-arrow-down" @click="back"></div>
           <p class="title">{{currentSong.name}}</p>
@@ -39,7 +41,7 @@
         </div>
       </div>
     </transition>
-    <audio id="audioPlay" :src="songUrl" @timeupdate="updateTime" ref="audio"></audio>
+    <audio id="audioPlay" :src="songUrl" @timeupdate="updateTime" @play="ready" ref="audio"></audio>
   </div>
 </template>
 
@@ -57,15 +59,16 @@
         playTime: 0,
         songUrl: '',
         isFirst: true,
+        isReady: false
       }
     },
     methods: {
       back() {
         this.setFullScreen(false);
       },
-      getPic(pic) {
+      /*getPic(pic) {
         return `background-image: url(${pic});`
-      },
+      },*/
       open() {
         this.setFullScreen(true);
       },
@@ -86,8 +89,20 @@
         return `${m}:${s}`;
       },
       next() {
+        console.log(this.isReady)
+        if(!this.isReady){
+          return
+        }
+        console.log(1111)
         let index = this.currentIndex + 1;
+        if(index === this.playList.length){
+          index = 0;
+        }
         this.setCurrentIndex(index);
+        //this.isReady = false;
+      },
+      ready() {
+        //this.isReady = true;
       },
       _pad(str) {
         let len = str.toString().length;
@@ -173,12 +188,12 @@
         z-index: -1;
         width: 100%;
         overflow: hidden;
-        //background-image: url(./../common/image/test.png);
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: cover;
-        filter: blur(20px);
-        transform: scale(1.5);
+        & > img{
+          width: 100%;
+          height: 100%;
+          transform: scale(1.5);
+          filter: blur(20px);
+        }
         &:after {
           content: '';
           position: absolute;

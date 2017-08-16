@@ -24,7 +24,6 @@
   import Scroll from 'base/scroll'
   import axios from 'axios'
   import {createdSong} from 'common/js/base'
-  import {getSongsId} from 'common/js/common'
 
   export default {
     name: 'recommend',
@@ -37,7 +36,6 @@
       return {
         songSheet: [],
         songsList: [],
-        songsId: '',
         isClick: true
       }
     },
@@ -76,7 +74,6 @@
         axios.get('/api/personalized/newsong').then((res) => {
           if (res.status === 200) {
             this.songsList = createdSong(res.data.result);
-            //this.songsId = getSongsId(this.songsList);
           }
         })
       },

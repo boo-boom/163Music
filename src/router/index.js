@@ -1,11 +1,28 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Recommend from '@/components/recommend'
-import Hot from '@/components/hot'
-import Search from '@/components/search'
-import PlayList from '@/components/play_list'
 
 Vue.use(Router);
+
+const Recommend = (resolve) => {
+  import('@/components/recommend').then((module) => {
+    resolve(module);
+  });
+};
+const Hot = (resolve) => {
+  import('@/components/hot').then((module) => {
+    resolve(module);
+  });
+};
+const Search = (resolve) => {
+  import('@/components/search').then((module) => {
+    resolve(module);
+  });
+};
+const PlayList = (resolve) => {
+  import('@/components/play_list').then((module) => {
+    resolve(module);
+  });
+};
 
 export default new Router({
   routes: [

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+  <div onclick="fn();">btn111</div>
+</body>
+<script>
+  let is = false;
+  let num = 1;
+  function fn() {
+    if(!is){
+      return
+    }
+    num++;
+    console.log(num);
+    //is = false;
+  }
+  /*setTimeout(function () {
+    is = true;
+  },1000);*/
+</script>
+</html>
