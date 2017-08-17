@@ -1,21 +1,54 @@
-# 163
+# 网易云音乐
 
-> 网易云音乐
+> （个人学习日志）vue2.0开发音乐webapp
 
-## Build Setup
+### 技术栈
+* vue2.0
+* vuex
+* vue-router
+* axios
+* less
+* vue-cli webpack template
+
+### 安装运行
 
 ``` bash
-# install dependencies
+# 安装依赖
 npm install
 
-# serve with hot reload at localhost:8080
+# 启动服务
 npm run dev
 
-# build for production with minification
+# 打包
 npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
 ```
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+### 目录
+```
+├── build              
+├── config           
+├── dist                 
+├── src               
+│   ├── api       		
+│   ├── assets         
+│   ├── base        
+│   ├── common        
+│   │   ├── fonts        
+│   │   ├── image        
+│   │   ├── js        
+│   │   └── style        
+│   ├── components    
+│   ├── router         
+│   ├── store           
+│   ├── App.vue       
+│   └── main.js
+├── index.html        
+├── package.json  
+└── static       
+```
+
+### 功能介绍
+> v0.1 | 2017.08.17
+* 推荐歌单+最新音乐
+* 音乐播放器功能（播放/暂停/切换播放模式）
+* 播放歌单列表
