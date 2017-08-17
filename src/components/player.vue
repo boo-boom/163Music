@@ -7,7 +7,10 @@
         </div>
         <div class="header">
           <div class="back iconfont icon-arrow-down" @click="back"></div>
-          <p class="title">{{currentSong.name}}</p>
+          <p class="title">
+            <span class="p-1">{{currentSong.name}}</span>
+            <span class="p-2">{{currentSong.artistsName}}</span>
+          </p>
         </div>
         <div class="cd">
           <div class="cd-wrapper" :class="rotateCls">
@@ -22,10 +25,10 @@
           <p class="total-time">{{formatTime(playTime)}}</p>
         </div>
         <div class="btn">
-          <span class="iconfont icon-liebiaoxunhuan"></span>
-          <span class="iconfont icon-kuaitui"></span>
+          <span class="iconfont" :class="iconMode" @click="changeMode"></span>
+          <span class="iconfont icon-kuaitui" @click="prev" ref="ktBtn"></span>
           <span class="iconfont play-icon" :class="iconPlay" @click="togglePlay"></span>
-          <span class="iconfont icon-kuaijin" @click="next"></span>
+          <span class="iconfont icon-kuaijin" @click="next" ref="kjBtn"></span>
           <span class="iconfont icon-liebiao list-icon"></span>
         </div>
       </div>
@@ -35,13 +38,17 @@
         <div class="img">
           <img v-lazy="currentSong.pic" :class="rotateCls">
         </div>
+        <div class="text ellipsis">
+          <p class="title">{{currentSong.name}}</p>
+          <p class="name">{{currentSong.artistsName}}</p>
+        </div>
         <div class="mini-btn">
           <span class="iconfont mini-play-icon" :class="iconPlay" @click.stop="togglePlay"></span>
           <span class="iconfont icon-liebiao mini-list-icon"></span>
         </div>
       </div>
     </transition>
-    <audio id="audioPlay" :src="songUrl" @timeupdate="updateTime" @play="ready" ref="audio"></audio>
+    <audio id="audioPlay" :src="songUrl" @timeupdate="updateTime" @play="ready" @error="error" @ended="end" ref="audio"></audio>
   </div>
 </template>
 
@@ -49,6 +56,8 @@
   import axios from 'axios'
   import {mapGetters, mapMutations} from 'vuex'
   import ProgressBar from 'base/progress_bar'
+  import {playMode} from 'common/js/config'
+  import {randomArr} from 'common/js/common'
 
   export default {
     name: 'player',
@@ -59,7 +68,7 @@
         playTime: 0,
         songUrl: '',
         isFirst: true,
-        isReady: false
+        isReady: false,
       }
     },
     methods: {
@@ -89,20 +98,63 @@
         return `${m}:${s}`;
       },
       next() {
-        console.log(this.isReady)
-        if(!this.isReady){
-          return
-        }
-        console.log(1111)
+        if (!this.isReady) return;
         let index = this.currentIndex + 1;
-        if(index === this.playList.length){
+        if (index === this.playList.length) {
           index = 0;
         }
         this.setCurrentIndex(index);
-        //this.isReady = false;
+        if (!this.playing) {
+          this.setPlaying(!this.playing);
+        }
+        this.isReady = false;
+      },
+      prev() {
+        if (!this.isReady) return;
+        let index = this.currentIndex - 1;
+        if (index <= 0) {
+          index = this.playList.length - 1;
+        }
+        this.setCurrentIndex(index);
+        if (!this.playing) {
+          this.setPlaying(!this.playing);
+        }
+        this.isReady = false;
+      },
+      end() {
+        if (this.mode === playMode.loop) {
+          this.loop();
+        } else {
+          this.next();
+        }
+      },
+      loop() {
+        this.$refs.audio.currentTime = 0;
+        this.$refs.audio.play();
       },
       ready() {
-        //this.isReady = true;
+        this.isReady = true;
+      },
+      error() {
+        this.isReady = true;
+      },
+      changeMode() {
+        let mode = (this.mode + 1) % 3;
+        let list = [];
+        if (mode === playMode.random) {
+          list = randomArr(this.sequenceList);
+        } else {
+          list = this.sequenceList;
+        }
+        this.setPlayMode(mode);
+        this.resetCurrentSong(list);
+        this.setPlayList(list);
+      },
+      resetCurrentSong(list) {
+        let index = list.findIndex((item) => {
+          return item.id === this.currentSong.id;
+        });
+        this.setCurrentIndex(index);
       },
       _pad(str) {
         let len = str.toString().length;
@@ -129,7 +181,9 @@
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
         setPlaying: 'SET_PLAYING',
-        setCurrentIndex: 'SET_CURRENT_INDEX'
+        setCurrentIndex: 'SET_CURRENT_INDEX',
+        setPlayMode: 'SET_PLAY_MODE',
+        setPlayList: 'SET_PLAY_LIST'
       })
     },
     computed: {
@@ -142,10 +196,16 @@
       percent() {
         return this.currentTime / this.playTime;
       },
-      ...mapGetters(['playing', 'fullScreen', 'playList', 'currentSong', 'currentIndex'])
+      iconMode() {
+        return this.mode === playMode.sequence ? 'icon-liebiaoxunhuan' : this.mode === playMode.loop ? 'icon-danquxunhuan' : this.mode === playMode.random ? 'icon-suiji' : '';
+      },
+      ...mapGetters(['playing', 'fullScreen', 'playList', 'currentSong', 'currentIndex', 'mode', 'sequenceList'])
     },
     watch: {
-      currentIndex() {
+      currentSong(newVal, oldVal) {
+        if (newVal.id === oldVal.id) {
+          return;
+        }
         this._getSongUrl();
       },
       playing(newVal) {
@@ -161,7 +221,16 @@
         } else {
           audio.pause();
         }
-      }
+      },
+      isReady(newVal) {
+        if (newVal) {
+          this.$refs.kjBtn.style.opacity = '';
+          this.$refs.ktBtn.style.opacity = '';
+        } else {
+          this.$refs.kjBtn.style.opacity = 0.5;
+          this.$refs.ktBtn.style.opacity = 0.5;
+        }
+      },
     }
   }
 </script>
@@ -188,7 +257,7 @@
         z-index: -1;
         width: 100%;
         overflow: hidden;
-        & > img{
+        & > img {
           width: 100%;
           height: 100%;
           transform: scale(1.5);
@@ -229,10 +298,20 @@
           left: 0;
           width: 100%;
           height: 100%;
+          line-height: 2rem;
           text-align: center;
-          line-height: 4.4rem;
           font-size: @font-size-large;
           color: @color-theme;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          .p-1 {
+            padding-top: 1rem;
+            font-size: @font-size-medium;
+          }
+          .p-2 {
+            font-size: @font-size-small-ss;
+          }
         }
       }
       .cd {
@@ -295,6 +374,7 @@
           text-align: center;
           font-size: 4rem;
           color: @color-theme;
+          transition: all 0.2s;
         }
         .play-icon {
           font-size: 5rem;
@@ -321,7 +401,6 @@
       padding: 0 1.5rem;
       border-top: 1px solid #ddd;
       .img {
-        flex: 1;
         & > img {
           width: 3rem;
           height: 3rem;
@@ -334,6 +413,18 @@
           &.pause {
             animation-play-state: paused;
           }
+        }
+      }
+      .text {
+        flex: 1;
+        margin-left: 2rem;
+        .title {
+          font-size: @font-size-medium;
+          padding-bottom: 0.5rem;
+        }
+        .name {
+          font-size: @font-size-small-ss;
+          color: @color-text-d;
         }
       }
       .mini-btn {

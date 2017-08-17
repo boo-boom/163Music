@@ -11,16 +11,36 @@
 <script>
   let is = false;
   let num = 1;
+
   function fn() {
     if(!is){
+      console.log(is);
       return
     }
     num++;
+    console.log(is);
     console.log(num);
     //is = false;
   }
   /*setTimeout(function () {
     is = true;
-  },1000);*/
+  },3000);*/
+
+  function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  var arr = ['1a','2b','3c','4d'];
+  function randomArr(a){
+    var _a = a.slice();
+    for(let i=0;i<_a.length;i++){
+      var j = random(0,i);
+      var t = _a[i];    //原始数组
+      _a[i] = _a[j];    //_a[i:0] = _a[j:2] => a[i:0] : 3c
+      _a[j] = t;        //_a[j:2] = t[0] => _a[j:2] : 1a   _a => [3c,2b,1a,4d]
+    }
+  }
+  randomArr(arr);
+
 </script>
 </html>

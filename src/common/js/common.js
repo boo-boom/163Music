@@ -23,7 +23,7 @@ export function computedREM() {
  * @returns {*}
  */
 export function conversion(number) {
-  if(parseInt(number) > 10000) {
+  if (parseInt(number) > 10000) {
     return `${Math.floor((number / 10000))}万`
   }
   return number;
@@ -54,3 +54,50 @@ export function getSongsId(list) {
   });
   return ret.join(',');
 }
+
+/**
+ * 指定区间随机数
+ * @param min
+ * @param max
+ * @returns {number}
+ */
+export function random(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+/**
+ * 随机数组
+ * @param arr
+ * @returns {Array}
+ */
+export function randomArr(arr) {
+  let _arr = arr.slice();
+  for (let i = 0; i < _arr.length; i++) {
+    let j = random(0, i);
+    let t = _arr[i];
+    _arr[i] = _arr[j];
+    _arr[j] = t;
+  }
+  return _arr;
+}
+
+/**
+ * 获取元素索引
+ * @param arr
+ * @param cur
+ * @returns {number}
+ */
+export function findIndex(arr, cur) {
+  return arr.findIndex((item) => {
+    return item.id === cur.id;
+  });
+}
+
+
+
+
+
+
+
+
+

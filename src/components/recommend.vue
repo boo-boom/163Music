@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <scroll class="recommend" v-show="songSheet.length" :isRefresh="isRefresh">
+  <div class="recommend" ref="recommend">
+    <scroll class="recommend-content" v-show="songSheet.length" :isRefresh="isRefresh" ref="scroll">
       <div>
         <div>
           <list-title title="推荐歌单"></list-title>
@@ -18,6 +18,7 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from 'vuex'
+  import {playMixin} from 'common/js/mixin'
   import ImgList from 'base/img_list'
   import ListTitle from 'base/list_title'
   import SongsList from 'base/songs_list'
@@ -27,6 +28,7 @@
 
   export default {
     name: 'recommend',
+    mixins: [playMixin],
     components: {ListTitle, ImgList, SongsList, Scroll},
     created() {
       this._getSongSheet();
@@ -40,6 +42,11 @@
       }
     },
     methods: {
+      refreshScroll(playList) {
+        const bottom = playList.length > 0 ? '5rem' : 0;
+        this.$refs.recommend.style.bottom = bottom;
+        this.$refs.scroll.refresh();
+      },
       selectItem(item) {
         if (item.id) {
           this.$router.push({
@@ -51,7 +58,6 @@
         });
       },
       checkedSong(item, index) {
-        console.log(item);
         this.setIsLoad(true);
         if(!this.isClick){
           return
@@ -99,6 +105,10 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    z-index: 1;
+    z-index: 4;
+    .recommend-content{
+      height: 100%;
+      overflow: hidden;
+    }
   }
 </style>

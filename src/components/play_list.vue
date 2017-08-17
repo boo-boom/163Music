@@ -28,7 +28,7 @@
           <p class="label">歌曲列表</p>
         </div>
       </div>
-      <scroll class="songs-list-wrapper" :isRefresh="isRefresh">
+      <scroll class="songs-list-wrapper" :isRefresh="isRefresh" ref="scroll">
         <songs-list :songsList="songsList" :isRank="isRank" @clickCurrent="checkedSong"></songs-list>
       </scroll>
     </div>
@@ -36,7 +36,8 @@
 </template>
 
 <script>
-  import {mapMutations} from 'vuex'
+  import {mapMutations, mapActions} from 'vuex'
+  import {playMixin} from 'common/js/mixin'
   import axios from 'axios'
   import SongsList from 'base/songs_list'
   import Scroll from 'base/scroll'
@@ -44,6 +45,7 @@
 
   export default {
     name: 'playList',
+    mixins: [playMixin],
     components: {SongsList, Scroll},
     created() {
       document.querySelector('body').style.overflow = 'hidden';
@@ -60,12 +62,20 @@
       }
     },
     methods: {
+      refreshScroll(playList) {
+        const bottom = playList.length > 0 ? '5rem' : 0;
+        this.$refs.scroll.$el.style.bottom = bottom;
+        this.$refs.scroll.refresh();
+      },
       back() {
         document.querySelector('body').style.overflow = '';
         this.$router.back();
       },
-      checkedSong(item) {
-        console.log(JSON.stringify(item));
+      checkedSong(item, index) {
+        this.selectPlay({
+          list: this.songsList,
+          index: index
+        });
       },
       _getSongDetail() {
         axios.get('/api/playlist/detail', {
@@ -89,6 +99,7 @@
           music.alias = item.alia.length ? item.alia[0] : '';
           music.artistsName = filterSinger(item.ar);
           music.albumName = item.al.name;
+          music.pic = item.al.picUrl;
           music.sq = false;
           ret.push(music);
         });
@@ -96,7 +107,8 @@
       },
       ...mapMutations({
         setIsLoad: 'SET_IS_LOAD'
-      })
+      }),
+      ...mapActions(['selectPlay'])
     },
     computed: {
       bgStyle() {
