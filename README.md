@@ -29,9 +29,9 @@ npm run build
 * 音乐播放器功能（播放/暂停/切换播放模式）
 * 播放歌单列表
 
-![image](https://github.com/boo-boom/163Music/blob/master/src/assets/thumbnails/01-iPhone6.png)
-![image](https://github.com/boo-boom/163Music/blob/master/src/assets/thumbnails/02-iPhone6.png)
-![image](https://github.com/boo-boom/163Music/blob/master/src/assets/thumbnails/03-iPhone6.png)
+![image](https://github.com/boo-boom/163Music/blob/master/src/assets/thumbnails/tb-01.png)
+![image](https://github.com/boo-boom/163Music/blob/master/src/assets/thumbnails/tb-02.png)
+![image](https://github.com/boo-boom/163Music/blob/master/src/assets/thumbnails/tb-03.png)
 
 ### 目录
 ```
