@@ -23,6 +23,14 @@ npm run dev
 npm run build
 ```
 
+### 功能介绍
+> v0.1 | 2017.08.17
+* 推荐歌单+最新音乐
+* 音乐播放器功能（播放/暂停/切换播放模式）
+* 播放歌单列表
+
+![image](https://github.com/boo-boom/163Music/blob/master/src/assets/thumbnails/01-iPhone6.png)
+
 ### 目录
 ```
 ├── build              
@@ -46,9 +54,3 @@ npm run build
 ├── package.json  
 └── static       
 ```
-
-### 功能介绍
-> v0.1 | 2017.08.17
-* 推荐歌单+最新音乐
-* 音乐播放器功能（播放/暂停/切换播放模式）
-* 播放歌单列表
