@@ -30,6 +30,8 @@ npm run build
 * 播放歌单列表
 
 ![image](https://github.com/boo-boom/163Music/blob/master/src/assets/thumbnails/01-iPhone6.png)
+![image](https://github.com/boo-boom/163Music/blob/master/src/assets/thumbnails/02-iPhone6.png)
+![image](https://github.com/boo-boom/163Music/blob/master/src/assets/thumbnails/03-iPhone6.png)
 
 ### 目录
 ```
